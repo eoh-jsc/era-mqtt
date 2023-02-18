@@ -9,20 +9,23 @@ services:
     depends_on:
       - postgres
 
-  postgres:
-    image: postgres:14
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: emqx
-
   emqx:
     image: emqx/emqx
+    user: root
     ports:
       - "1883:1883"
       - "8083:8083"
       - "8084:8084"
       - "8883:8883"
       - "18083:18083"
+    volumes:
+      - ./emqx_config/emqx.conf:/opt/emqx/etc/emqx.conf
     depends_on:
       - postgres
+
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: emqx
