@@ -67,7 +67,6 @@ def hello():
 # @app.route("/list_user")
 # def list_user():
 #     users = Users.query.all()
-#     print('xxx', users)
 #     return str(users)
 
 
@@ -106,8 +105,8 @@ def user_delete(username):
 
 
 # TODO make compatiple with type, pattern, read, write
-@app.route("/users/<uuid:key>/acl/", methods=['POST'])
-def acl_create(key):
+@app.route("/acls/", methods=['POST'])
+def acl_create():
     # if request.headers.get('Authorization') != os.getenv('API_KEY'):
     #     return 'Wrong api key', 403
 
