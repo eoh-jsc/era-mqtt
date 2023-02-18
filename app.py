@@ -28,6 +28,7 @@ class Action(enum.Enum):
     all = "all"
 
 
+# TODO username as primary key
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
@@ -92,12 +93,12 @@ def user_create():
     return 'OK', 201
 
 
-@app.route("/users/<uuid:key>/", methods=['DELETE'])
-def user_delete(key):
+@app.route("/users/<username>/", methods=['DELETE'])
+def user_delete(username):
     # if request.headers.get('Authorization') != os.getenv('API_KEY'):
     #     return 'Wrong api key', 403
 
-    user = db.get_or_404(Users, username=str(key))
+    user = Users.query.filter_by(username=username).one()
 
     db.session.delete(user)
     db.session.commit()
