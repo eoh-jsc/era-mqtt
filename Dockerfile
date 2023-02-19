@@ -16,5 +16,4 @@ COPY . .
 
 EXPOSE 5000
 
-#CMD ["poetry", "run", "python", "app.py"]
-CMD ["poetry", "run", "uwsgi", "--ini", "./uwsgi/config.ini"]
+CMD ["poetry", "run", "uwsgi", "/app/uwsgi/config.ini"]
