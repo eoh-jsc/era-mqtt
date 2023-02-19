@@ -76,8 +76,8 @@ def user_create():
     # if request.headers.get('Authorization') != os.getenv('API_KEY'):
     #     return 'Wrong api key', 403
 
-    username = str(request.form['username'])
-    password = str(request.form['password'])
+    username = request.json['username']
+    password = request.json['password']
 
     username = username.strip()
     password_hash = sha256(password.encode('utf-8')).hexdigest()
@@ -104,20 +104,34 @@ def user_delete(username):
     return 'OK', 204
 
 
-# TODO make compatiple with type, pattern, read, write
 @app.route("/acls/", methods=['POST'])
 def acl_create():
     # if request.headers.get('Authorization') != os.getenv('API_KEY'):
     #     return 'Wrong api key', 403
 
-    username = request.form['username']
-    topic = request.form['topic']
-    permission = request.form['permission']
-    action = request.form['action']
+    # Ignore type since default is topic
+
+    username = request.json['username']
+    pattern = request.json['pattern']
+    read = request.json['read']
+    write = request.json['write']
+
+    action = 'all'
+    permission = 'deny'
+
+    if read:
+        action = 'subscribe'
+        permission = 'allow'
+    if write:
+        action = 'publish'
+        permission = 'allow'
+    if read and write:
+        action = 'all'
+        permission = 'allow'
 
     acl = Acl(
         username=username,
-        topic=topic,
+        topic=pattern,
         permission=permission,
         action=action,
     )
