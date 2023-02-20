@@ -70,7 +70,7 @@ def hello():
 
 
 # TODO os set env API_KEY
-@app.route("/users/", methods=['POST'])
+@app.route("/api/user", methods=['POST'])
 def user_create():
     # if request.headers.get('Authorization') != os.getenv('API_KEY'):
     #     return 'Wrong api key', 403
@@ -91,7 +91,7 @@ def user_create():
     return 'OK', 201
 
 
-@app.route("/users/<username>/", methods=['DELETE'])
+@app.route("/api/user/<username>", methods=['DELETE'])
 def user_delete(username):
     # if request.headers.get('Authorization') != os.getenv('API_KEY'):
     #     return 'Wrong api key', 403
@@ -103,7 +103,7 @@ def user_delete(username):
     return 'OK', 204
 
 
-@app.route("/acls/", methods=['POST'])
+@app.route("/api/acl", methods=['POST'])
 def acl_create():
     # if request.headers.get('Authorization') != os.getenv('API_KEY'):
     #     return 'Wrong api key', 403
