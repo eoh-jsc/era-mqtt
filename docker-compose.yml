@@ -2,24 +2,17 @@ version: '3'
 services:
   app:
     build: .
-    ports:
-      - "8000:5000"
-    volumes:
-      - .:/app
-    depends_on:
-      - postgres
-
-  emqx:
-    image: emqx/emqx
     user: root
     ports:
+      - "8000:5000"
       - "1883:1883"
-      - "8083:8083"
-      - "8084:8084"
       - "8883:8883"
+      - "80:80"
+      - "443:443"
       - "18083:18083"
     volumes:
-      - ./emqx_config/emqx.conf:/opt/emqx/etc/emqx.conf
+      - .:/app
+      - ./mqtt/emqx.conf:/etc/emqx/emqx.conf
     depends_on:
       - postgres
 
