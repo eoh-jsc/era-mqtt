@@ -13,6 +13,8 @@ services:
     volumes:
       - .:/app
       - ./mqtt/emqx.conf:/etc/emqx/emqx.conf
+      - ./ssl/cert.pem:/etc/ssl/certs/cert.pem
+      - ./ssl/key.pem:/etc/ssl/certs/key.pem
     depends_on:
       - postgres
 

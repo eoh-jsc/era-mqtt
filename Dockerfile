@@ -24,3 +24,4 @@ EXPOSE 8084
 EXPOSE 18083
 
 CMD ["supervisord", "-c", "supervisor/supervisord.conf"]
+#CMD ["poetry", "run", "python", "app.py"]

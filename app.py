@@ -12,6 +12,7 @@ from sqlalchemy.sql import func
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://root:password@postgres/emqx'
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
