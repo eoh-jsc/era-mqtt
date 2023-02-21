@@ -1,8 +1,8 @@
-"""create user acl table
+"""Create user and acl
 
-Revision ID: 84518e17df6a
+Revision ID: e44fcc162140
 Revises: 
-Create Date: 2023-02-18 14:30:48.030671
+Create Date: 2023-02-21 16:44:03.226728
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '84518e17df6a'
+revision = 'e44fcc162140'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -29,13 +29,12 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('users',
-    sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('username', sa.String(), nullable=False),
     sa.Column('password_hash', sa.String(), nullable=False),
     sa.Column('salt', sa.String(), nullable=False),
     sa.Column('is_superuser', sa.Boolean(), nullable=False),
     sa.Column('time_created', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
-    sa.PrimaryKeyConstraint('id'),
+    sa.PrimaryKeyConstraint('username'),
     sa.UniqueConstraint('username')
     )
     # ### end Alembic commands ###

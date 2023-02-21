@@ -28,10 +28,8 @@ class Action(enum.Enum):
     all = "all"
 
 
-# TODO username as primary key
 class Users(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, unique=True, nullable=False)
+    username = db.Column(db.String, unique=True, primary_key=True, nullable=False)
     password_hash = db.Column(db.String, default='', nullable=False)
     salt = db.Column(db.String, default='', nullable=False)
     is_superuser = db.Column(db.Boolean, default=False, nullable=False)
