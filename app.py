@@ -1,10 +1,9 @@
 import enum
-
+import os
 from hashlib import sha256
 
 from flask import Flask
 from flask import request
-
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
@@ -12,9 +11,10 @@ from sqlalchemy.sql import func
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://root:password@postgres/emqx'
-
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+API_KEY = os.getenv('API_KEY')
 
 
 class Permission(enum.Enum):
@@ -56,25 +56,10 @@ def hello():
     return "Hello, World!"
 
 
-# @app.route("/create_user")
-# def create_user():
-#     user = Users(username='john')
-#     db.session.add(user)
-#     db.session.commit()
-#     return "User created!"
-#
-#
-# @app.route("/list_user")
-# def list_user():
-#     users = Users.query.all()
-#     return str(users)
-
-
-# TODO os set env API_KEY
 @app.route("/api/user", methods=['POST'])
 def user_create():
-    # if request.headers.get('Authorization') != os.getenv('API_KEY'):
-    #     return 'Wrong api key', 403
+    if request.headers.get('Authorization') != API_KEY:
+        return 'Wrong api key', 403
 
     username = request.json['username']
     password = request.json['password']
@@ -94,8 +79,8 @@ def user_create():
 
 @app.route("/api/user/<username>", methods=['DELETE'])
 def user_delete(username):
-    # if request.headers.get('Authorization') != os.getenv('API_KEY'):
-    #     return 'Wrong api key', 403
+    if request.headers.get('Authorization') != API_KEY:
+        return 'Wrong api key', 403
 
     user = Users.query.filter_by(username=username).one()
 
@@ -104,18 +89,7 @@ def user_delete(username):
     return 'OK', 204
 
 
-@app.route("/api/acl", methods=['POST'])
-def acl_create():
-    # if request.headers.get('Authorization') != os.getenv('API_KEY'):
-    #     return 'Wrong api key', 403
-
-    # Ignore type since default is topic
-
-    username = request.json['username']
-    pattern = request.json['pattern']
-    read = request.json['read']
-    write = request.json['write']
-
+def get_action_and_permission(read, write):
     action = 'all'
     permission = 'deny'
 
@@ -128,6 +102,21 @@ def acl_create():
     if read and write:
         action = 'all'
         permission = 'allow'
+
+    return action, permission
+
+
+@app.route("/api/acl", methods=['POST'])
+def acl_create():
+    if request.headers.get('Authorization') != API_KEY:
+        return 'Wrong api key', 403
+
+    username = request.json['username']
+    pattern = request.json['pattern']
+    read = request.json['read']
+    write = request.json['write']
+
+    action, permission = get_action_and_permission(read, write)
 
     acl = Acl(
         username=username,
