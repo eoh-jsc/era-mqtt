@@ -3,18 +3,23 @@ import os
 from hashlib import sha256
 
 from flask import Flask
+from flask import jsonify
 from flask import request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_basicauth import BasicAuth
 
 from sqlalchemy.sql import func
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://root:password@postgres/emqx'
+app.config['BASIC_AUTH_USERNAME'] = ''
+app.config['BASIC_AUTH_PASSWORD'] = os.getenv('API_KEY')
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-API_KEY = os.getenv('API_KEY')
+basic_auth = BasicAuth(app)
 
 
 class Permission(enum.Enum):
@@ -38,6 +43,12 @@ class Users(db.Model):
     def __repr__(self):
         return self.username
 
+    def to_dict(self):
+        return {
+            'username': self.username,
+            'time_created': self.time_created
+        }
+
 
 class Acl(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -54,32 +65,33 @@ def hello():
     return "Hello, World!"
 
 
-@app.route("/api/user", methods=['POST'])
+@app.route("/api/user", methods=['GET', 'POST'])
+@basic_auth.required
 def user_create():
-    if request.headers.get('Authorization') != API_KEY:
-        return 'Wrong api key', 403
+    if request.method == 'GET':
+        users = Users.query.all()
+        return jsonify([user.to_dict() for user in users])
 
-    username = request.json['username']
-    password = request.json['password']
+    else:
+        username = request.json['username']
+        password = request.json['password']
 
-    username = username.strip()
-    password_hash = sha256(password.encode('utf-8')).hexdigest()
+        username = username.strip()
+        password_hash = sha256(password.encode('utf-8')).hexdigest()
 
-    user = Users(
-        username=username,
-        password_hash=password_hash,
-    )
+        user = Users(
+            username=username,
+            password_hash=password_hash,
+        )
 
-    db.session.add(user)
-    db.session.commit()
-    return 'OK', 201
+        db.session.add(user)
+        db.session.commit()
+        return 'OK', 201
 
 
 @app.route("/api/user/<username>", methods=['DELETE'])
+@basic_auth.required
 def user_delete(username):
-    if request.headers.get('Authorization') != API_KEY:
-        return 'Wrong api key', 403
-
     user = Users.query.filter_by(username=username).one()
 
     db.session.delete(user)
@@ -105,10 +117,8 @@ def get_action_and_permission(read, write):
 
 
 @app.route("/api/acl", methods=['POST'])
+@basic_auth.required
 def acl_create():
-    if request.headers.get('Authorization') != API_KEY:
-        return 'Wrong api key', 403
-
     username = request.json['username']
     pattern = request.json['pattern']
     read = request.json['read']
