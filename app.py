@@ -1,6 +1,7 @@
-import enum
 import os
+import json
 from hashlib import sha256
+from enum import Enum
 
 from flask import Flask
 from flask import jsonify
@@ -22,12 +23,19 @@ migrate = Migrate(app, db)
 basic_auth = BasicAuth(app)
 
 
-class Permission(enum.Enum):
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Enum):
+            return obj.value
+        return super().default(obj)
+
+
+class Permission(Enum):
     allow = "allow"
     deny = "deny"
 
 
-class Action(enum.Enum):
+class Action(Enum):
     publish = "publish"
     subscribe = "subscribe"
     all = "all"
@@ -59,6 +67,14 @@ class Acl(db.Model):
     permission = db.Column(db.Enum(Permission))
     action = db.Column(db.Enum(Action))
 
+    def to_dict(self):
+        return {
+            'username': self.username,
+            'topic': self.topic,
+            'permission': self.permission,
+            'action': self.action
+        }
+
 
 @app.route("/")
 def hello():
@@ -71,7 +87,6 @@ def user_create():
     if request.method == 'GET':
         users = Users.query.all()
         return jsonify([user.to_dict() for user in users])
-
     else:
         username = request.json['username']
         password = request.json['password']
@@ -116,25 +131,30 @@ def get_action_and_permission(read, write):
     return action, permission
 
 
-@app.route("/api/acl", methods=['POST'])
+@app.route("/api/acl", methods=['GET', 'POST'])
 @basic_auth.required
 def acl_create():
-    username = request.json['username']
-    pattern = request.json['pattern']
-    read = request.json['read']
-    write = request.json['write']
+    if request.method == 'GET':
+        acls = Acl.query.all()
+        data = json.dumps([acl.to_dict() for acl in acls], cls=CustomJSONEncoder)
+        return jsonify(json.loads(data))
+    else:
+        username = request.json['username']
+        pattern = request.json['pattern']
+        read = request.json['read']
+        write = request.json['write']
 
-    action, permission = get_action_and_permission(read, write)
+        action, permission = get_action_and_permission(read, write)
 
-    acl = Acl(
-        username=username,
-        topic=pattern,
-        permission=permission,
-        action=action,
-    )
-    db.session.add(acl)
-    db.session.commit()
-    return 'OK', 201
+        acl = Acl(
+            username=username,
+            topic=pattern,
+            permission=permission,
+            action=action,
+        )
+        db.session.add(acl)
+        db.session.commit()
+        return 'OK', 201
 
 
 if __name__ == "__main__":
