@@ -4,15 +4,16 @@ services:
     build: .
     user: root
     ports:
-      - "8000:5000"
+      - "80:80"
+      - "18083:18083"
       - "1883:1883"
       - "8883:8883"
-      - "80:80"
-      - "443:443"
-      - "18083:18083"
+      - "8083:8083"
+      - "8084:8084"
     volumes:
       - .:/app
       - ./mqtt/emqx.conf:/etc/emqx/emqx.conf
+      - ./nginx/nginx.conf:/etc/nginx/sites-available/nginx.conf
       - ./certs/cert.pem:/etc/ssl/certs/cert.pem
       - ./certs/key.pem:/etc/ssl/certs/key.pem
     depends_on:
