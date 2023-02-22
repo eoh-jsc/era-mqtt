@@ -5,6 +5,7 @@ services:
     user: root
     ports:
       - "80:80"
+      - "443:443"
       - "18083:18083"
       - "1883:1883"
       - "8883:8883"
@@ -14,8 +15,7 @@ services:
       - .:/app
       - ./mqtt/emqx.conf:/etc/emqx/emqx.conf
       - ./nginx/nginx.conf:/etc/nginx/sites-available/nginx.conf
-      - ./certs/cert.pem:/etc/ssl/certs/cert.pem
-      - ./certs/key.pem:/etc/ssl/certs/key.pem
+      - ./certs/:/etc/letsencrypt/live/cloudmqtt.e-ra.io/
     depends_on:
       - postgres
 

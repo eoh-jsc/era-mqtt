@@ -24,6 +24,7 @@ RUN unlink /etc/nginx/sites-enabled/default
 # TODO Son
 
 EXPOSE 80
+EXPOSE 443
 EXPOSE 18083
 EXPOSE 1883
 EXPOSE 8883
