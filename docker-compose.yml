@@ -15,7 +15,7 @@ services:
       - .:/app
       - ./mqtt/emqx.conf:/etc/emqx/emqx.conf
       - ./nginx/nginx.conf:/etc/nginx/sites-available/nginx.conf
-      - ./certs/:/etc/letsencrypt/live/cloudmqtt.e-ra.io/
+      - ./certs/:/etc/ssl/eoh-certs/
     depends_on:
       - postgres
 
