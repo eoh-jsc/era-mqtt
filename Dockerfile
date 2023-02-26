@@ -20,6 +20,8 @@ RUN poetry config virtualenvs.create false && \
 RUN ln -s /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-enabled/
 RUN unlink /etc/nginx/sites-enabled/default
 
+RUN mkdir /var/log/uwsgi
+
 EXPOSE 80
 EXPOSE 443
 EXPOSE 18083
