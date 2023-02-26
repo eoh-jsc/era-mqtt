@@ -2,7 +2,6 @@ version: '3'
 services:
   app:
     build: .
-    user: root
     ports:
       - "80:80"
       - "443:443"
@@ -16,6 +15,8 @@ services:
       - ./mqtt/emqx.conf:/etc/emqx/emqx.conf
       - ./nginx/nginx.conf:/etc/nginx/sites-available/nginx.conf
       - ./certs/:/etc/ssl/eoh-certs/
+      - emqx_data:/usr/lib/emqx/data
+      - emqx_log:/var/log/emqx
     depends_on:
       - postgres
 
@@ -30,3 +31,5 @@ services:
 
 volumes:
   postgres_db:
+  emqx_data:
+  emqx_log:
