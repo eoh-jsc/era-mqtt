@@ -78,7 +78,7 @@ class Acl(db.Model):
 
 @app.route("/")
 def hello():
-    return "Hello, World!"
+    return "Hello, World!!!"
 
 
 @app.route("/api/user", methods=['GET', 'POST'])
