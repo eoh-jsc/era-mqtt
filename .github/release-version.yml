@@ -1,0 +1,26 @@
+name: Release version
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: release-version-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  make-tag:
+    runs-on: [self-hosted, linux, x64, general]
+    container: python:3.10.10-slim-buster
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set version
+        id: version-release
+        run: echo "::set-output name=version::$(bash ./scripts/get_version.sh)"
+        env:
+          COMMIT_TIME: ${{ github.event.head_commit.timestamp }}
+      - uses: tvdias/github-tagger@v0.0.1
+        with:
+          repo-token: '${{ secrets.AUTORELEASE_TOKEN }}'
+          tag: 'v${{ steps.version-release.outputs.version }}'

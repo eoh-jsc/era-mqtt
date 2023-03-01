@@ -1,0 +1,21 @@
+name: Deploy production
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  deploy-production:
+    name: "Deploy production"
+    runs-on: [self-hosted, linux, x64, automerge]
+    container:
+      image: python:3.10.10-slim-buster
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy
+        run: |
+          apt-get update -y
+          pip install fabric
+          echo "${{ secrets.DEPLOY_KEY }}" > id_rsa.pub
+          fab deploy -H ${{ secrets.DEPLOY_HOST }} -i ./id_rsa.pub
