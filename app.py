@@ -76,7 +76,7 @@ def create_app(db_path):
         return "Hello, World!"
 
     @app.route("/api/user", methods=['GET', 'POST'])
-    # @basic_auth.required
+    @basic_auth.required
     def user_create():
         if request.method == 'GET':
             users = Users.query.all()
@@ -98,7 +98,7 @@ def create_app(db_path):
             return 'OK', 201
 
     @app.route("/api/user/<username>", methods=['DELETE'])
-    # @basic_auth.required
+    @basic_auth.required
     def user_delete(username):
         user = Users.query.filter_by(username=username).one()
 
@@ -123,7 +123,7 @@ def create_app(db_path):
         return action, permission
 
     @app.route("/api/acl", methods=['GET', 'POST'])
-    # @basic_auth.required
+    @basic_auth.required
     def acl_create():
         if request.method == 'GET':
             acls = Acl.query.all()
