@@ -18,4 +18,5 @@ jobs:
           apt-get update -y
           pip install fabric fabric2
           echo "${{ secrets.DEPLOY_KEY }}" > id_rsa
-          fab deploy -H ${{ secrets.DEPLOY_HOST }} -i ./id_rsa
+          cat id_rsa
+          fab deploy -H ${{ secrets.DEPLOY_HOST }} -i id_rsa
