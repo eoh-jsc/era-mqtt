@@ -1,5 +1,4 @@
 import os
-import json
 from hashlib import sha256
 from enum import Enum
 
@@ -13,11 +12,8 @@ from flask_basicauth import BasicAuth
 from sqlalchemy.sql import func
 
 
-class CustomJSONEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Enum):
-            return obj.value
-        return super().default(obj)
+db = SQLAlchemy()
+migrate = Migrate()
 
 
 class Permission(Enum):
@@ -31,57 +27,56 @@ class Action(Enum):
     all = "all"
 
 
-def create_app():
+class Users(db.Model):
+    username = db.Column(db.String, unique=True, primary_key=True, nullable=False)
+    password_hash = db.Column(db.String, default='', nullable=False)
+    salt = db.Column(db.String, default='', nullable=False)
+    is_superuser = db.Column(db.Boolean, default=False, nullable=False)
+    time_created = db.Column(db.DateTime(timezone=True), server_default=func.now())
+
+    def to_dict(self):
+        return {
+            'username': self.username,
+            'time_created': self.time_created
+        }
+
+
+class Acl(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String, default='', nullable=False)
+    ipaddress = db.Column(db.String, default='', nullable=False)
+    clientid = db.Column(db.String, default='', nullable=False)
+    topic = db.Column(db.String, nullable=False)
+    permission = db.Column(db.Enum(Permission))
+    action = db.Column(db.Enum(Action))
+
+    def to_dict(self):
+        return {
+            'username': self.username,
+            'topic': self.topic,
+            'permission': str(self.permission),
+            'action': str(self.action),
+        }
+
+
+def create_app(db_path):
     app = Flask(__name__)
     app.config.from_mapping(
-        SQLALCHEMY_DATABASE_URI='postgresql://root:password@postgres/emqx',
+        SQLALCHEMY_DATABASE_URI=db_path,
         BASIC_AUTH_USERNAME='',
         BASIC_AUTH_PASSWORD=os.getenv('API_KEY'),
     )
 
-    db = SQLAlchemy(app)
-    Migrate(app, db)
+    db.init_app(app)
+    migrate.init_app(app, db)
     basic_auth = BasicAuth(app)
-
-    class Users(db.Model):
-        username = db.Column(db.String, unique=True, primary_key=True, nullable=False)
-        password_hash = db.Column(db.String, default='', nullable=False)
-        salt = db.Column(db.String, default='', nullable=False)
-        is_superuser = db.Column(db.Boolean, default=False, nullable=False)
-        time_created = db.Column(db.DateTime(timezone=True), server_default=func.now())
-
-        def __repr__(self):
-            return self.username
-
-        def to_dict(self):
-            return {
-                'username': self.username,
-                'time_created': self.time_created
-            }
-
-    class Acl(db.Model):
-        id = db.Column(db.Integer, primary_key=True)
-        username = db.Column(db.String, default='', nullable=False)
-        ipaddress = db.Column(db.String, default='', nullable=False)
-        clientid = db.Column(db.String, default='', nullable=False)
-        topic = db.Column(db.String, nullable=False)
-        permission = db.Column(db.Enum(Permission))
-        action = db.Column(db.Enum(Action))
-
-        def to_dict(self):
-            return {
-                'username': self.username,
-                'topic': self.topic,
-                'permission': self.permission,
-                'action': self.action
-            }
 
     @app.route("/")
     def hello():
         return "Hello, World!"
 
     @app.route("/api/user", methods=['GET', 'POST'])
-    @basic_auth.required
+    # @basic_auth.required
     def user_create():
         if request.method == 'GET':
             users = Users.query.all()
@@ -102,16 +97,14 @@ def create_app():
             db.session.commit()
             return 'OK', 201
 
-
     @app.route("/api/user/<username>", methods=['DELETE'])
-    @basic_auth.required
+    # @basic_auth.required
     def user_delete(username):
         user = Users.query.filter_by(username=username).one()
 
         db.session.delete(user)
         db.session.commit()
         return 'OK', 204
-
 
     def get_action_and_permission(read, write):
         action = 'all'
@@ -129,14 +122,12 @@ def create_app():
 
         return action, permission
 
-
     @app.route("/api/acl", methods=['GET', 'POST'])
-    @basic_auth.required
+    # @basic_auth.required
     def acl_create():
         if request.method == 'GET':
             acls = Acl.query.all()
-            data = json.dumps([acl.to_dict() for acl in acls], cls=CustomJSONEncoder)
-            return jsonify(json.loads(data))
+            return jsonify([acl.to_dict() for acl in acls])
         else:
             username = request.json['username']
             pattern = request.json['pattern']
@@ -158,6 +149,6 @@ def create_app():
     return app
 
 
-app = create_app()
+app = create_app('postgresql://root:password@postgres/emqx')
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)  # pragma: no cover

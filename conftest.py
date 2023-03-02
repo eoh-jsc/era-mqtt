@@ -1,25 +1,28 @@
 import pytest
 
 from app import create_app
+from app import db
+from app import Users
 
 
 @pytest.fixture()
 def app():
-    app = create_app()
-    app.config.update({
-        "TESTING": True,
-    })
+    app = create_app("sqlite://")
+    app.config["TESTING"] = True
 
-    # other setup can go here
+    with app.app_context():
+        db.create_all()
+        yield app
 
-    yield app
-
-    # clean up / reset resources here
+        # other setup can go here
+        # app
+        # clean up / reset resources here
 
 
 @pytest.fixture()
 def client(app):
-    return app.test_client()
+    client = app.test_client()
+    yield client
 
 
 @pytest.fixture()
