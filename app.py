@@ -157,6 +157,6 @@ def create_app(db_path, test):
     return app
 
 
-app = create_app(db_path='postgresql://root:password@postgres/emqx', test=True)
+app = create_app(db_path='postgresql://root:password@postgres/emqx', test=False)
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)  # pragma: no cover
