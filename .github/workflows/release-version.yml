@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Set version
         id: version-release
-        run: echo "::set-output name=version::$(bash ./scripts/get_version.sh)"
+        run: echo "::set-output name=version::$(bash ./.github/scripts/get_version.sh)"
         env:
           COMMIT_TIME: ${{ github.event.head_commit.timestamp }}
       - uses: tvdias/github-tagger@v0.0.1
