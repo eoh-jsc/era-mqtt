@@ -13,6 +13,9 @@ flask-migrate = "^4.0.4"
 uwsgi = "^2.0.21"
 flask-basicauth = "^0.2.0"
 basicauth = "^1.0.0"
+pytest = "^7.2.1"
+pytest-cov = "^4.0.0"
+pytest-xdist = "^3.2.0"
 
 [build-system]
 requires = ["poetry-core"]
