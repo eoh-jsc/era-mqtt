@@ -5,6 +5,7 @@ from enum import Enum
 from flask import Flask
 from flask import jsonify
 from flask import request
+from flask.cli import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_basicauth import BasicAuth
@@ -59,12 +60,19 @@ class Acl(db.Model):
         }
 
 
-def create_app(db_path):
+def create_app(db_path, test):
     app = Flask(__name__)
+
+    if test:
+        load_dotenv('.env.test')
+    else:
+        load_dotenv()  # pragma: no cover
+
     app.config.from_mapping(
         SQLALCHEMY_DATABASE_URI=db_path,
         BASIC_AUTH_USERNAME='',
         BASIC_AUTH_PASSWORD=os.getenv('API_KEY'),
+        TESTING=test,
     )
 
     db.init_app(app)
@@ -149,6 +157,6 @@ def create_app(db_path):
     return app
 
 
-app = create_app('postgresql://root:password@postgres/emqx')
+app = create_app(db_path='postgresql://root:password@postgres/emqx', test=True)
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)  # pragma: no cover

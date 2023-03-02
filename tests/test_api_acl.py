@@ -4,9 +4,9 @@ from app import Permission
 from factories.acl import AclFactory
 
 
-def test_get_acl(client):
+def test_get_acl(client, auth_user):
     acl = AclFactory(action='all', permission='allow')
-    response = client.get("/api/acl")
+    response = client.get("/api/acl", headers=auth_user)
     assert response.status_code == 200
     assert response.json == [{
         'action': acl.action,
@@ -16,13 +16,13 @@ def test_get_acl(client):
     }]
 
 
-def _test_add_acl(client, read, write):
+def _test_add_acl(client, auth_user, read, write):
     response = client.post("/api/acl", json={
         "username": "User 1",
         "pattern": "pattern_1",
         "read": read,
         "write": write,
-    })
+    }, headers=auth_user)
     assert response.status_code == 201
     assert response.data == b'OK'
 
@@ -33,25 +33,25 @@ def _test_add_acl(client, read, write):
     return acl
 
 
-def test_add_acl_read(client):
-    acl = _test_add_acl(client, True, False)
+def test_add_acl_read(client, auth_user):
+    acl = _test_add_acl(client, auth_user, True, False)
     assert acl.action == Action.subscribe
     assert acl.permission == Permission.allow
 
 
-def test_add_acl_write(client):
-    acl = _test_add_acl(client, False, True)
+def test_add_acl_write(client, auth_user):
+    acl = _test_add_acl(client, auth_user, False, True)
     assert acl.action == Action.publish
     assert acl.permission == Permission.allow
 
 
-def test_add_acl_read_write(client):
-    acl = _test_add_acl(client, True, True)
+def test_add_acl_read_write(client, auth_user):
+    acl = _test_add_acl(client, auth_user, True, True)
     assert acl.action == Action.all
     assert acl.permission == Permission.allow
 
 
-def test_add_acl_no_read_write(client):
-    acl = _test_add_acl(client, False, False)
+def test_add_acl_no_read_write(client, auth_user):
+    acl = _test_add_acl(client, auth_user, False, False)
     assert acl.action == Action.all
     assert acl.permission == Permission.deny
