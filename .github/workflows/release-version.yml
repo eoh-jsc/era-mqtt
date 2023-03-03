@@ -17,7 +17,7 @@ concurrency:
 jobs:
   test:
     runs-on: [self-hosted, linux, x64, general]
-    container: python:3.10.10-slim-buster
+    container: python:3.10.10-slim-buster  # TODO
     steps:
       - uses: actions/checkout@v3
       - name: Run test
