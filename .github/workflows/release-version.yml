@@ -1,18 +1,38 @@
 name: Release version
 
+#on:
+#  pull_request:
+#    types: [closed]
+#    branches: [main]
+
 on:
-  pull_request:
-    types: [closed]
-    branches: [main]
+  push:
+    branches:
+      - main
 
 concurrency:
   group: release-version-${{ github.head_ref }}
   cancel-in-progress: true
 
 jobs:
+  test:
+    runs-on: [self-hosted, linux, x64, general]
+    container: python:3.10.10-slim-buster
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run test
+        run: |
+          apt-get update -y
+          apt-get install -y build-essential python3-dev
+          pip install poetry
+          poetry install
+          poetry run pytest --cov
+
   make-tag:
     runs-on: [self-hosted, linux, x64, general]
     container: python:3.10.10-slim-buster
+    needs:
+      - test
     steps:
       - uses: actions/checkout@v3
       - name: Set version

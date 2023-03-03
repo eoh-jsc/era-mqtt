@@ -12,8 +12,6 @@ def app():
     load_dotenv('.env.test')
     app = create_app(db_path="sqlite://", test=True)
 
-    print('xxxxx', app.config)
-
     with app.app_context():
         db.create_all()
         yield app
