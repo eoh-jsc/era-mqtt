@@ -11,6 +11,7 @@ def restart_all(c):
     c.run('docker-compose exec -T app supervisorctl reread')
     c.run('docker-compose exec -T app supervisorctl update')
     c.run('docker-compose exec -T app supervisorctl restart all')
+    c.run('docker-compose exec -T app supervisorctl status')
 
 
 @task
