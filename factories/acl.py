@@ -1,9 +1,9 @@
 import factory
 
-from app import Acl
-from app import Action
-from app import db
-from app import Permission
+from init_app import Acl
+from init_app import Action
+from init_app import Permission
+from init_app import db
 
 
 class AclFactory(factory.alchemy.SQLAlchemyModelFactory):

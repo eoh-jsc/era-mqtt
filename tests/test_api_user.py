@@ -1,8 +1,8 @@
 from freezegun import freeze_time
 from datetime import datetime
 
-from app import Users
 from factories.users import UsersFactory
+from init_app import Users
 
 
 @freeze_time("2012-01-01")

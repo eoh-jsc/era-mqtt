@@ -1,6 +1,7 @@
 import factory
-from app import db
-from app import Users
+
+from init_app import Users
+from init_app import db
 
 
 class UsersFactory(factory.alchemy.SQLAlchemyModelFactory):

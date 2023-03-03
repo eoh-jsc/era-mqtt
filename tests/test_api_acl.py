@@ -1,7 +1,7 @@
-from app import Acl
-from app import Action
-from app import Permission
 from factories.acl import AclFactory
+from init_app import Acl
+from init_app import Action
+from init_app import Permission
 
 
 def test_get_acl(client, auth_user):
