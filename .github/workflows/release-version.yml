@@ -15,13 +15,21 @@ jobs:
     container: python:3.10.10-slim-buster
     steps:
       - uses: actions/checkout@v3
-      - name: Run test
+      - name: Cache dependencies
+        id: cache-dependencies
+        uses: actions/cache@v3
+        with:
+          key: ${{ runner.os }}-${{ github.repository }}-${{ hashFiles('**/poetry.lock') }}
+      - name: Install poetry
         run: |
           apt-get update -y
           apt-get install -y build-essential python3-dev
           pip install poetry
-          poetry install
-          poetry run pytest --cov
+      - name: Install dependencies
+        if: steps.cache-dependencies.outputs.cache-hit != 'true'
+        run: poetry install
+      - name: Run test
+        run: poetry run pytest --cov
 
   make-tag:
     runs-on: [self-hosted, linux, x64, general]
