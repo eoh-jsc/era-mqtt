@@ -13,4 +13,4 @@ class UsersFactory(factory.alchemy.SQLAlchemyModelFactory):
     password_hash = factory.Faker('password')
     salt = factory.Faker('word')
     is_superuser = False
-    # time_created = factory.Faker("date_time_this_decade")
+    time_created = factory.Faker('date_time_this_decade')

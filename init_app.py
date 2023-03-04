@@ -26,6 +26,23 @@ class Action(Enum):
     all = 'all'
 
 
+def get_action_and_permission(read, write):
+    action = 'all'
+    permission = 'deny'
+
+    if read:
+        action = 'subscribe'
+        permission = 'allow'
+    if write:
+        action = 'publish'
+        permission = 'allow'
+    if read and write:
+        action = 'all'
+        permission = 'allow'
+
+    return action, permission
+
+
 class Users(db.Model):
     username = db.Column(db.String, unique=True, primary_key=True, nullable=False)
     password_hash = db.Column(db.String, default='', nullable=False)
@@ -77,85 +94,63 @@ def create_app(db_path=None, test=None):
 
     @app.route('/api/user', methods=['GET', 'POST'])
     @basic_auth.required
-    def user_create():
+    def user_api():
         if request.method == 'GET':
             users = Users.query.all()
             return jsonify([user.to_dict() for user in users])
-        else:
-            username = request.json['username']
-            password = request.json['password']
 
-            username = username.strip()
-            password_hash = sha256(password.encode('utf-8')).hexdigest()
+        username = request.json['username']
+        password = request.json['password']
+        username = username.strip()
+        password_hash = sha256(password.encode('utf-8')).hexdigest()
 
-            user = Users(
-                username=username,
-                password_hash=password_hash,
-            )
-
-            db.session.add(user)
-            db.session.commit()
-            return 'OK', 201
+        user = Users(
+            username=username,
+            password_hash=password_hash,
+        )
+        db.session.add(user)
+        db.session.commit()
+        return 'OK', 201
 
     @app.route('/api/user/<username>', methods=['DELETE'])
     @basic_auth.required
     def user_delete(username):
         user = Users.query.filter_by(username=username).one()
-
         db.session.delete(user)
         db.session.commit()
         return 'OK', 204
 
-    def get_action_and_permission(read, write):
-        action = 'all'
-        permission = 'deny'
-
-        if read:
-            action = 'subscribe'
-            permission = 'allow'
-        if write:
-            action = 'publish'
-            permission = 'allow'
-        if read and write:
-            action = 'all'
-            permission = 'allow'
-
-        return action, permission
-
     @app.route('/api/acl', methods=['GET', 'POST'])
     @basic_auth.required
-    def acl_create():
+    def acl_api():
         if request.method == 'GET':
             acls = Acl.query.all()
             return jsonify([acl.to_dict() for acl in acls])
-        else:
-            username = request.json['username']
-            pattern = request.json['pattern']
-            read = request.json['read']
-            write = request.json['write']
 
-            action, permission = get_action_and_permission(read, write)
+        username = request.json['username']
+        pattern = request.json['pattern']
+        read = request.json['read']
+        write = request.json['write']
 
-            acl = Acl(
-                username=username,
-                topic=pattern,
-                permission=permission,
-                action=action,
-            )
-            db.session.add(acl)
-            db.session.commit()
-            return 'OK', 201
+        action, permission = get_action_and_permission(read, write)
+
+        acl = Acl(
+            username=username,
+            topic=pattern,
+            permission=permission,
+            action=action,
+        )
+        db.session.add(acl)
+        db.session.commit()
+        return 'OK', 201
 
     @app.route('/api/acl/<username>', methods=['DELETE'])
     @basic_auth.required
     def acl_delete(username):
-        users = Acl.query.filter_by(username=username).all()
-        for user in users:
-            db.session.delete(user)
+        acls = Acl.query.filter_by(username=username).all()
+        for acl in acls:
+            db.session.delete(acl)
         db.session.commit()
         return 'OK', 204
-
-    # TODO group acl
-    # TODO group user
 
     return app

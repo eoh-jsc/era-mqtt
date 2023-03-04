@@ -1,6 +1,5 @@
 from fabric2 import task
 
-
 project_path = '/root/era-mqtt'
 
 
@@ -19,6 +18,6 @@ def restart_all(c):
 def deploy(c):
     print('Starting...')
     with c.cd(project_path):
-        c.run('git pull')  # TODO
+        c.run('git pull')  # TODO ver
         restart_all(c)
     print('Success.')
