@@ -55,3 +55,11 @@ def test_add_acl_no_read_write(client, auth_user):
     acl = _test_add_acl(client, auth_user, False, False)
     assert acl.action == Action.all
     assert acl.permission == Permission.deny
+
+
+def test_delete_acl(client, auth_user):
+    acl = AclFactory()
+    response = client.delete(f"/api/acl/{acl.username}", headers=auth_user)
+    assert response.status_code == 204
+    assert response.data == b''
+    assert Acl.query.count() == 0
