@@ -10,7 +10,7 @@ from init_app import db
 @pytest.fixture()
 def app():
     load_dotenv('.env.test')
-    app = create_app(db_path="sqlite://", test=True)
+    app = create_app(db_path='sqlite://', test=True)
 
     with app.app_context():
         db.create_all()
@@ -31,7 +31,7 @@ def client(app):
 def auth_user():
     username = ''
     password = 'Token'
-    credentials = f"{username}:{password}".encode('utf-8')
+    credentials = f'{username}:{password}'.encode('utf-8')
     token = base64.b64encode(credentials).decode('utf-8')
     return {'Authorization': f'Basic {token}'}
 

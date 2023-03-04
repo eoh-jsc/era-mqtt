@@ -11,9 +11,9 @@ class AclFactory(factory.alchemy.SQLAlchemyModelFactory):
         model = Acl
         sqlalchemy_session = db.session
 
-    username = factory.Faker("user_name")
-    ipaddress = factory.Faker("ipv4_private")
-    clientid = factory.Faker("uuid4")
-    topic = factory.Faker("word")
+    username = factory.Faker('user_name')
+    ipaddress = factory.Faker('ipv4_private')
+    clientid = factory.Faker('uuid4')
+    topic = factory.Faker('word')
     permission = factory.Iterator([Permission.allow, Permission.deny])
     action = factory.Iterator([Action.publish, Action.subscribe])
