@@ -8,7 +8,7 @@ on:
 jobs:
   deploy-production:
     name: "Deploy production"
-    runs-on: [self-hosted, linux, x64, automerge]
+    runs-on: [ self-hosted, linux, x64, automerge ]
     container:
       image: python:3.10.10-slim-buster
     steps:
@@ -19,3 +19,17 @@ jobs:
           pip install fabric fabric2
           echo "${{ secrets.DEPLOY_KEY }}" > id_rsa
           fab deploy -H ${{ secrets.DEPLOY_HOST }} -i ./id_rsa
+
+  test-production-api:
+    name: "Test production API"
+    runs-on: [ self-hosted, linux, x64, automerge ]
+    container:
+      image: postman/newman:alpine
+    needs:
+      - deploy-production
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run test
+        run: newman run "https://api.getpostman.com/collections/${{ secrets.COLLECTION_ID }}?apikey=${{ secrets.POSTMAN_API_KEY }}"
+
+

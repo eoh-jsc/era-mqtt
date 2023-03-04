@@ -146,4 +146,16 @@ def create_app(db_path=None, test=None):
             db.session.commit()
             return 'OK', 201
 
+    @app.route("/api/acl/<username>", methods=['DELETE'])
+    @basic_auth.required
+    def acl_delete(username):
+        user = Acl.query.filter_by(username=username).one()
+
+        db.session.delete(user)
+        db.session.commit()
+        return 'OK', 204
+
+    # TODO group acl
+    # TODO group user
+
     return app
