@@ -30,6 +30,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run test
-        run: newman run "https://api.getpostman.com/collections/${{ secrets.COLLECTION_ID }}?apikey=${{ secrets.POSTMAN_API_KEY }}"
+        run: newman run "https://api.getpostman.com/collections/${{ secrets.POSTMAN_COLLECTION_ID }}?apikey=${{ secrets.POSTMAN_API_KEY }}"
 
 

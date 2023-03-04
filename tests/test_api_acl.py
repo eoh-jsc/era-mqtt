@@ -58,7 +58,8 @@ def test_add_acl_no_read_write(client, auth_user):
 
 
 def test_delete_acl(client, auth_user):
-    acl = AclFactory()
+    acl = AclFactory(username='User 1')
+    AclFactory(username='User 1')  # another acl same user
     response = client.delete(f"/api/acl/{acl.username}", headers=auth_user)
     assert response.status_code == 204
     assert response.data == b''
