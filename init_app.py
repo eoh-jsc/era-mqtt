@@ -16,14 +16,14 @@ migrate = Migrate()
 
 
 class Permission(Enum):
-    allow = "allow"
-    deny = "deny"
+    allow = 'allow'
+    deny = 'deny'
 
 
 class Action(Enum):
-    publish = "publish"
-    subscribe = "subscribe"
-    all = "all"
+    publish = 'publish'
+    subscribe = 'subscribe'
+    all = 'all'
 
 
 class Users(db.Model):
@@ -71,11 +71,11 @@ def create_app(db_path=None, test=None):
     migrate.init_app(app, db)
     basic_auth = BasicAuth(app)
 
-    @app.route("/")
+    @app.route('/')
     def hello():
-        return "Hello, World!"
+        return 'Hello, World!'
 
-    @app.route("/api/user", methods=['GET', 'POST'])
+    @app.route('/api/user', methods=['GET', 'POST'])
     @basic_auth.required
     def user_create():
         if request.method == 'GET':
@@ -97,7 +97,7 @@ def create_app(db_path=None, test=None):
             db.session.commit()
             return 'OK', 201
 
-    @app.route("/api/user/<username>", methods=['DELETE'])
+    @app.route('/api/user/<username>', methods=['DELETE'])
     @basic_auth.required
     def user_delete(username):
         user = Users.query.filter_by(username=username).one()
@@ -122,7 +122,7 @@ def create_app(db_path=None, test=None):
 
         return action, permission
 
-    @app.route("/api/acl", methods=['GET', 'POST'])
+    @app.route('/api/acl', methods=['GET', 'POST'])
     @basic_auth.required
     def acl_create():
         if request.method == 'GET':
@@ -146,7 +146,7 @@ def create_app(db_path=None, test=None):
             db.session.commit()
             return 'OK', 201
 
-    @app.route("/api/acl/<username>", methods=['DELETE'])
+    @app.route('/api/acl/<username>', methods=['DELETE'])
     @basic_auth.required
     def acl_delete(username):
         users = Acl.query.filter_by(username=username).all()
