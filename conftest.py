@@ -15,7 +15,6 @@ def app():
     with app.app_context():
         db.create_all()
         yield app
-
         # other setup can go here
         # app
         # clean up / reset resources here
