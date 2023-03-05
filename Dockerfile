@@ -27,6 +27,7 @@ RUN poetry config virtualenvs.create false && \
 RUN ln -s /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-enabled/
 RUN unlink /etc/nginx/sites-enabled/default
 
+# docs 8001:5000
 EXPOSE 80
 EXPOSE 443
 EXPOSE 18083
@@ -35,5 +36,6 @@ EXPOSE 1883
 EXPOSE 8883
 EXPOSE 8083
 EXPOSE 8084
+EXPOSE 5000
 
 CMD ["/bin/bash", "entrypoint.sh"]

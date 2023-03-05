@@ -1,16 +1,13 @@
 import pytest
 import base64
 
-from flask.cli import load_dotenv
-
 from init_app import create_app
 from init_app import db
 
 
 @pytest.fixture()
 def app():
-    load_dotenv('.env.test')
-    app = create_app(db_path='sqlite://', test=True)
+    app = create_app('.env.test', test=True)
 
     with app.app_context():
         db.create_all()

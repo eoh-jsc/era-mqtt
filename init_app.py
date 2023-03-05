@@ -1,7 +1,7 @@
-import os
 from hashlib import sha256
 from enum import Enum
 
+from dotenv import dotenv_values
 from flask import Flask
 from flask import jsonify
 from flask import request
@@ -75,12 +75,14 @@ class Acl(db.Model):
         }
 
 
-def create_app(db_path=None, test=None):
+def create_app(env_filename, test):
+    env = dotenv_values(env_filename)
+
     app = Flask(__name__)
     app.config.from_mapping(
-        SQLALCHEMY_DATABASE_URI=db_path,
+        SQLALCHEMY_DATABASE_URI=env['SQLALCHEMY_DATABASE_URI'],
         BASIC_AUTH_USERNAME='',
-        BASIC_AUTH_PASSWORD=os.getenv('API_KEY'),
+        BASIC_AUTH_PASSWORD=env['API_KEY'],
         TESTING=test,
     )
 

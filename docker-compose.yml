@@ -2,6 +2,8 @@ version: '3'
 services:
   app:
     build: .
+    env_file:
+      - .env
     ports:
       - "80:80"
       - "443:443"
@@ -11,6 +13,7 @@ services:
       - "8883:8883"
       - "8083:8083"
       - "8084:8084"
+      - "8001:5000"
     volumes:
       - .:/app
       - ./mqtt/emqx.conf:/etc/emqx/emqx.conf
