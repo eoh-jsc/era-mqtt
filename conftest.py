@@ -36,3 +36,18 @@ def auth_user():
 @pytest.fixture()
 def runner(app):
     return app.test_cli_runner()
+
+
+def pytest_addoption(parser):
+    parser.addoption('--mqtt_server', action='store', default='default input1')
+    parser.addoption('--mqtt_username', action='store', default='default input2')
+
+
+@pytest.fixture
+def mqtt_server(request):
+    return request.config.getoption('--mqtt_server')
+
+
+@pytest.fixture
+def mqtt_username(request):
+    return request.config.getoption('--mqtt_username')

@@ -629,6 +629,20 @@ files = [
 ]
 
 [[package]]
+name = "paho-mqtt"
+version = "1.6.1"
+description = "MQTT version 5.0/3.1.1 client class"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "paho-mqtt-1.6.1.tar.gz", hash = "sha256:2a8291c81623aec00372b5a85558a372c747cbca8e9934dfe218638b8eefc26f"},
+]
+
+[package.extras]
+proxy = ["PySocks"]
+
+[[package]]
 name = "platformdirs"
 version = "3.1.0"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
@@ -1031,4 +1045,4 @@ watchdog = ["watchdog"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "69f43694dccab71e728d5b900a300132db913c3896054d6a4b3e0a8978cf7151"
+content-hash = "251346586f7421f5f26221cc9895894a925dd7c53570ff629586a617151ea0d6"

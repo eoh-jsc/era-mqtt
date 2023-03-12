@@ -20,7 +20,7 @@ jobs:
           echo "${{ secrets.DEPLOY_KEY }}" > id_rsa
           fab deploy -H ${{ secrets.DEPLOY_HOST }} -i ./id_rsa
 
-  test-production-api:
+  verify-api:
     name: "Test production API"
     runs-on: [ self-hosted, linux, x64, automerge ]
     container:
@@ -31,3 +31,15 @@ jobs:
       - uses: actions/checkout@v3
       - name: Run test
         run: newman run "https://api.getpostman.com/collections/${{ secrets.POSTMAN_COLLECTION_ID }}?apikey=${{ secrets.POSTMAN_API_KEY }}"
+
+  verify-mqtt:
+    runs-on: [ self-hosted, linux, x64, general ]
+    container: python:3.10.10
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install poetry
+        run: |
+          pip install poetry
+          poetry install
+      - name: Run test
+        run: poetry run pytest .github/scripts/verify_mqtt_connection.py --mqtt_server ${{ secrets.MQTT_SERVER }} --mqtt_username ${{ secrets.MQTT_USERNAME }}
