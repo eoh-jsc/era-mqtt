@@ -18,7 +18,6 @@ def on_subscribe(client, userdata, mid, granted_qos):
 
 
 def on_message(client, userdata, msg):
-    print(f'Topic receive: {msg.topic}')
     print(f'Message receive: {msg.payload}')
 
     assert msg.payload == SEND_MESSAGE.encode()
