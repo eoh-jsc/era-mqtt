@@ -21,7 +21,7 @@ jobs:
           fab deploy -H ${{ secrets.DEPLOY_HOST }} -i ./id_rsa
 
   verify-api:
-    name: "Test production API"
+    name: "Verify api"
     runs-on: [ self-hosted, linux, x64, automerge ]
     container:
       image: postman/newman:alpine
@@ -33,6 +33,7 @@ jobs:
         run: newman run "https://api.getpostman.com/collections/${{ secrets.POSTMAN_COLLECTION_ID }}?apikey=${{ secrets.POSTMAN_API_KEY }}"
 
   verify-mqtt:
+    name: "Verify mqtt"
     runs-on: [ self-hosted, linux, x64, general ]
     container: python:3.10.10
     needs:
