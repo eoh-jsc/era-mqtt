@@ -1,6 +1,7 @@
 import pytest
 
 from factories.users import UsersFactory
+# TODO mock mqtt connection
 
 
 def test_healthcheck_without_users(client):
