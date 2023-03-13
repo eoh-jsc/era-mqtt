@@ -94,6 +94,12 @@ def create_app(env_filename, test):
     def hello():
         return 'Hello, World!'
 
+    @app.route('/healthcheck')
+    def healthcheck():
+        if not Users.query.count():
+            raise Exception('No users in database')
+        return 'OK'
+
     @app.route('/api/user', methods=['GET', 'POST'])
     @basic_auth.required
     def user_api():
