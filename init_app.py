@@ -9,7 +9,7 @@ from flask import request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_basicauth import BasicAuth
-import paho.mqtt.client as mqtt
+from paho.mqtt import client
 
 from sqlalchemy.sql import func
 
@@ -77,12 +77,11 @@ class Acl(db.Model):
         }
 
 
-# TODO mock mqtt connection
 class MqttConnection:  # pragma: no cover
     success = False
 
     def __init__(self, mqtt_server, mqtt_username):
-        self.client = mqtt.Client(client_id=mqtt_username)
+        self.client = client.Client(client_id=mqtt_username)
         self.client.username_pw_set(mqtt_username, mqtt_username)
         self.client.connect(mqtt_server, 1883)
 
@@ -125,15 +124,14 @@ def create_app(env_filename, test):
     def hello():
         return 'Hello, World!'
 
-    # TODO mock mqtt connection
     @app.route('/healthcheck')
-    def healthcheck():  # pragma: no cover
+    def healthcheck():
         if not Users.query.count():
             raise Exception('No users in database')
 
         client = MqttConnection(env['MQTT_SERVER'], env['MQTT_USERNAME'])
 
-        sleep(1)  # TODO optimize by thread
+        sleep(3)  # TODO optimize by thread
         if not client.success:
             raise Exception('MQTT connection failed')
 
