@@ -1,6 +1,5 @@
 from hashlib import sha256
 from enum import Enum
-from time import sleep
 
 from dotenv import dotenv_values
 from flask import Flask
@@ -9,7 +8,6 @@ from flask import request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_basicauth import BasicAuth
-from paho.mqtt import client
 
 from sqlalchemy.sql import func
 
@@ -77,34 +75,6 @@ class Acl(db.Model):
         }
 
 
-class MqttConnection:  # pragma: no cover
-    success = False
-
-    def __init__(self, mqtt_server, mqtt_username):
-        self.client = client.Client(client_id=mqtt_username)
-        self.client.username_pw_set(mqtt_username, mqtt_username)
-        self.client.connect(mqtt_server, 1883)
-
-        self.client.on_connect = self.on_connect
-        self.client.on_subscribe = self.on_subscribe
-        self.client.on_message = self.on_message
-
-        self.client.loop_start()
-
-    def on_connect(self, client, userdata, flags, rc):
-        if rc == 0:
-            self.success = True
-
-    def on_subscribe(self, client, userdata, mid, granted_qos):
-        print(f'Subscribed with QoS: {str(granted_qos)}')
-
-    def on_message(self, client, userdata, msg):
-        print(f'Message receive: {msg.payload}')
-
-    def disconnect(self):
-        self.client.disconnect()
-
-
 def create_app(env_filename, test):
     env = dotenv_values(env_filename)
 
@@ -128,14 +98,6 @@ def create_app(env_filename, test):
     def healthcheck():
         if not Users.query.count():
             raise Exception('No users in database')
-
-        client = MqttConnection(env['MQTT_SERVER'], env['MQTT_USERNAME'])
-
-        sleep(3)  # TODO optimize by thread
-        if not client.success:
-            raise Exception('MQTT connection failed')
-
-        client.disconnect()
         return 'OK'
 
     @app.route('/api/user', methods=['GET', 'POST'])
