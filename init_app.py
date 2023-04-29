@@ -1,14 +1,13 @@
-from hashlib import sha256
 from enum import Enum
+from hashlib import sha256
 
 from dotenv import dotenv_values
 from flask import Flask
 from flask import jsonify
 from flask import request
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from flask_basicauth import BasicAuth
-
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
 
 db = SQLAlchemy()
