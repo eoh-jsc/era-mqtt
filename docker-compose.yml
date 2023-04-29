@@ -21,6 +21,7 @@ services:
       - ./certs/:/etc/ssl/eoh-certs/
       - emqx_data:/usr/lib/emqx/data
       - emqx_log:/var/log/emqx
+      - nginx_log:/var/log/nginx
     depends_on:
       - postgres
       - datadog-agent
@@ -34,6 +35,7 @@ services:
     volumes:
       - postgres_db:/var/lib/postgresql/data
 
+  # TODO not send when dev stage
   datadog-agent:
     image: "datadog/agent:latest"
     env_file:
@@ -42,8 +44,11 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /proc/:/host/proc/:ro
       - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+      - nginx_log:/var/log/nginx
+      - ./datadog/logs.yaml:/conf.d/logs.yaml
 
 volumes:
   postgres_db:
   emqx_data:
   emqx_log:
+  nginx_log:
