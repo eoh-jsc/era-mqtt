@@ -39,7 +39,7 @@ services:
 
   # TODO not send when dev stage
   datadog-agent:
-    image: "datadog/agent:latest"
+    image: "datadog/agent:7.43.2"
     env_file:
       - .env_datadog
     volumes:
