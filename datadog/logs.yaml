@@ -1,5 +1,5 @@
 logs:
   - type: file
     path: /var/log/nginx/access.log
-    service: flask
-    source: era-mqtt-app
+    service: mqtt1
+    source: mqtt1
