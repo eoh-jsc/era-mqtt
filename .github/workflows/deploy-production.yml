@@ -8,7 +8,7 @@ on:
 jobs:
   deploy-production:
     name: "Deploy production"
-    runs-on: [self-hosted, linux, x64, automerge]
+    runs-on: [ self-hosted, linux, x64, automerge ]
     container:
       image: python:3.10.10-slim-buster
     steps:
@@ -16,13 +16,13 @@ jobs:
       - name: Deploy
         run: |
           apt-get update -y
-          pip install fabric fabric2
+          pip install fabric==3.0.0 fabric2=3.0.0
           echo "${{ secrets.DEPLOY_KEY }}" > id_rsa
           fab deploy -H ${{ secrets.DEPLOY_HOST }} -i ./id_rsa
 
   verify-api:
     name: "Verify api"
-    runs-on: [self-hosted, linux, x64, general]
+    runs-on: [ self-hosted, linux, x64, general ]
     container:
       image: postman/newman:alpine
     needs:
@@ -34,7 +34,7 @@ jobs:
 
   verify-mqtt:
     name: "Verify mqtt"
-    runs-on: [self-hosted, linux, x64, general]
+    runs-on: [ self-hosted, linux, x64, general ]
     container: python:3.10.10
     needs:
       - deploy-production
