@@ -90,6 +90,7 @@ asgi_3.sock.lock
 
 # Environments
 .env
+.env_datadog
 .venv
 env/
 venv/
