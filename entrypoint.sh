@@ -1,9 +1,13 @@
 #!/bin/bash
 
-echo [DEBUG] environment $BUILD_ENV
+echo [DEBUG] current environment $BUILD_ENV
 
 if [ "$BUILD_ENV" = "production" ] ; then
     exec supervisord -c supervisor/supervisord.conf
 else
+    echo [DEBUG] start EMQX
+    emqx start
+
+    echo [DEBUG] start Flask
     exec python app.py
 fi
