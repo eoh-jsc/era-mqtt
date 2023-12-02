@@ -18,6 +18,6 @@ def restart_all(c):
 def deploy(c):
     print('Starting...')
     with c.cd(project_path):
-        c.run('git pull')  # TODO ver
+        c.run('git pull')  # TODO make version
         restart_all(c)
     print('Success.')
