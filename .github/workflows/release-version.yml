@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   test:
-    runs-on: [self-hosted, linux, x64, general]  # TODO vm
+    runs-on: [ self-hosted, linux, x64 ]
     container: python:3.10.10
     steps:
       - uses: actions/checkout@v3
@@ -23,7 +23,7 @@ jobs:
         run: poetry run pytest --cov
 
   make-tag:
-    runs-on: [self-hosted, linux, x64, general]
+    runs-on: [ self-hosted, linux, x64 ]
     container: python:3.10.10-slim-buster
     needs:
       - test

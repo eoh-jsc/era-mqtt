@@ -1,10 +1,10 @@
 name: Flake8
 
-on: [pull_request]
+on: [ pull_request ]
 
 jobs:
   flake8:
-    runs-on: [self-hosted, linux, x64, general]
+    runs-on: [ self-hosted, linux, x64 ]
     container: python:3.9.7-slim-buster
     steps:
       - uses: actions/checkout@v3
