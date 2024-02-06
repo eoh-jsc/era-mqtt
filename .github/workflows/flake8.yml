@@ -1,9 +1,10 @@
-name: Flake8
+name: Pull request
 
 on: [ pull_request ]
 
 jobs:
   flake8:
+    name: "Flake8"
     runs-on: ubuntu-latest
     container: python:3.9.7-slim-buster
     steps:
@@ -12,3 +13,18 @@ jobs:
         run: pip install flake8==3.9.2 flake8-quotes==3.3.0 flake8-commas==2.0.0
       - name: Run flake8
         run: flake8 --count --show-source --statistics
+
+  test:
+    name: "Test coverage"
+    runs-on: ubuntu-latest
+    container: python:3.10.10
+    needs:
+      - flake8
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install poetry
+        run: |
+          pip install poetry
+          poetry install
+      - name: Run test
+        run: poetry run pytest --cov

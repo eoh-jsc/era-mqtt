@@ -59,6 +59,20 @@ def test_add_acl_no_read_write(client, auth_user):
     assert acl.permission == Permission.deny
 
 
+def test_add_acl_but_already_exist(client, auth_user):
+    AclFactory(username='User 1', topic='pattern_1')
+    response = client.post(
+        '/api/acl', json={
+            'username': 'User 1',
+            'pattern': 'pattern_1',
+            'read': True,
+            'write': True,
+        }, headers=auth_user,
+    )
+    assert response.status_code == 400
+    assert response.data == b'A rule matching {"type":"topic","pattern":"pattern_1","user":"User 1"} already exists'
+
+
 def test_delete_acl(client, auth_user):
     acl = AclFactory(username='User 1')
     AclFactory(username='User 1')  # another acl same user
