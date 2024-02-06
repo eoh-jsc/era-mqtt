@@ -99,6 +99,12 @@ def create_app(env_filename, test):
             raise Exception('No users in database')
         return 'OK'
 
+    def _delete_all_acl_by_username(username):
+        acls = Acl.query.filter_by(username=username).all()
+        for acl in acls:
+            db.session.delete(acl)
+        db.session.commit()
+
     @app.route('/api/user', methods=['GET', 'POST'])
     @basic_auth.required
     def user_api():
@@ -108,9 +114,14 @@ def create_app(env_filename, test):
 
         username = request.json['username']
         password = request.json['password']
+
+        # cloudmqtt {"error":"This username already exists"} 409
+        user = Users.query.filter_by(username=username).first()
+        if user:
+            return 'This username already exists', 409
+
         username = username.strip()
         password_hash = sha256(password.encode('utf-8')).hexdigest()
-
         user = Users(
             username=username,
             password_hash=password_hash,
@@ -122,9 +133,15 @@ def create_app(env_filename, test):
     @app.route('/api/user/<username>', methods=['DELETE'])
     @basic_auth.required
     def user_delete(username):
-        user = Users.query.filter_by(username=username).one()
+        user = Users.query.filter_by(username=username).first()
+
+        # cloudmqtt {"error":"No such user"} 404
+        if not user:
+            return 'No such user', 404
+
         db.session.delete(user)
         db.session.commit()
+        _delete_all_acl_by_username(username)
         return 'OK', 204
 
     @app.route('/api/acl', methods=['GET', 'POST'])
@@ -139,8 +156,12 @@ def create_app(env_filename, test):
         read = request.json['read']
         write = request.json['write']
 
-        action, permission = get_action_and_permission(read, write)
+        # cloudmqtt A rule matching {"type":"topic","pattern":"eoh/chip/123456/#","user":"123456"} already exists 400
+        acl = Acl.query.filter_by(username=username, topic=pattern).first()
+        if acl:
+            return f'A rule matching {{"type":"topic","pattern":"{pattern}","user":"{username}"}} already exists', 400
 
+        action, permission = get_action_and_permission(read, write)
         acl = Acl(
             username=username,
             topic=pattern,
@@ -151,13 +172,11 @@ def create_app(env_filename, test):
         db.session.commit()
         return 'OK', 201
 
+    # cloudmqtt don't have this
     @app.route('/api/acl/<username>', methods=['DELETE'])
     @basic_auth.required
     def acl_delete(username):
-        acls = Acl.query.filter_by(username=username).all()
-        for acl in acls:
-            db.session.delete(acl)
-        db.session.commit()
+        _delete_all_acl_by_username(username)
         return 'OK', 204
 
     return app
