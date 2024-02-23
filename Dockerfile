@@ -1,4 +1,4 @@
-FROM python:3.10.10
+FROM ubuntu:22.04
 
 USER root
 
@@ -7,7 +7,7 @@ WORKDIR /app
 COPY . .
 
 RUN apt-get update -y && \
-    apt-get install -y build-essential python3-dev supervisor wget nginx nano curl zsh
+    apt-get install -y build-essential git python3.10 python3-pip python3-dev supervisor wget nginx nano curl zsh
 
 RUN chsh -s $(which zsh) && \
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
@@ -16,8 +16,8 @@ RUN chsh -s $(which zsh) && \
 RUN mkdir /usr/lib/emqx && mkdir /usr/lib/emqx/data
 RUN chmod -R 777 /usr/lib/emqx/data
 
-RUN wget https://www.emqx.com/en/downloads/broker/5.0.17/emqx-5.0.17-ubuntu20.04-amd64.deb && \
-    apt-get install ./emqx-5.0.17-ubuntu20.04-amd64.deb
+RUN wget https://www.emqx.com/en/downloads/broker/5.5.0/emqx-5.5.0-ubuntu22.04-amd64.deb && \
+    apt-get install ./emqx-5.5.0-ubuntu22.04-amd64.deb
 
 RUN pip install poetry psycopg2-binary
 RUN poetry config virtualenvs.create false && \
