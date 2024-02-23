@@ -9,5 +9,5 @@ else
     emqx start
 
     echo [DEBUG] start Flask
-    exec python app.py
+    exec python3 app.py
 fi
