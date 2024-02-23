@@ -9,8 +9,6 @@ COPY . .
 RUN apt-get update -y && \
     apt-get install -y build-essential git python3.10 python3-pip python3-dev supervisor wget nginx nano curl zsh
 
-RUN python3 --version
-
 RUN chsh -s $(which zsh) && \
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
     echo "export PS1=\"(Docker)\$PS1\"" >> /root/.zshrc
