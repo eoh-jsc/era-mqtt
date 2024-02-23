@@ -1,6 +1,10 @@
 from enum import Enum
 from hashlib import sha256
 
+from flask import redirect
+from flask import Response
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 from dotenv import dotenv_values
 from flask import Flask
 from flask import jsonify
@@ -9,6 +13,7 @@ from flask_basicauth import BasicAuth
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
+from werkzeug.exceptions import HTTPException
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -85,9 +90,43 @@ def create_app(env_filename, test):
         TESTING=test,
     )
 
+    # initialize db and migrate
     db.init_app(app)
     migrate.init_app(app, db)
     basic_auth = BasicAuth(app)
+
+    # admin
+    app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
+    admin = Admin(app, name='mqtt1 admin', template_mode='bootstrap3')
+
+    class AuthException(HTTPException):  # pragma: no cover
+        def __init__(self, message):
+            super().__init__(
+                message,
+                Response(
+                    'You could not be authenticated. Please refresh the page.', 401,
+                    {'WWW-Authenticate': 'Basic realm="Login Required"'},
+                ),
+            )
+
+    class MyModelView(ModelView):  # pragma: no cover
+        def is_accessible(self):
+            if not basic_auth.authenticate():
+                raise AuthException('Not authenticated.')
+            else:
+                return True
+
+        def inaccessible_callback(self, name, **kwargs):
+            return redirect(basic_auth.challenge())
+
+    class UserAdmin(MyModelView):
+        column_display_pk = True
+
+    class AclAdmin(MyModelView):
+        column_display_pk = True
+
+    admin.add_view(UserAdmin(Users, db.session))
+    admin.add_view(AclAdmin(Acl, db.session))
 
     @app.route('/')
     def hello():
