@@ -17,10 +17,12 @@ runs:
     - name: test
       shell: bash
       run: |
+        echo $PATH
         ls ~/.cache/pypoetry
         cd ~/.cache/pypoetry
         ls -al
     - name: poetry install
       shell: bash
       run: |
+        poetry --version
         poetry install
