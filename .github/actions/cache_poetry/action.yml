@@ -9,13 +9,15 @@ runs:
       with:
         path: ~/.cache/pypoetry
         key: ${{ runner.os }}-${{ github.repository }}-${{ hashFiles('**/poetry.lock') }}
-    - name: Update setup tools
+    - name: Install poetry and dependencies
       shell: bash
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
       run: |
-        curl -sSL https://install.python-poetry.org | python3 -
-        export PATH="$HOME/.poetry/bin:$PATH"
-    - name: Install dependencies
+        pip install -U pip setuptools poetry
+        poetry install
+    - name: test
       shell: bash
-      if: steps.cache-dependencies.outputs.cache-hit != 'true'
-      run: poetry install
+      run: |
+        ls ~/.cache/pypoetry
+        cd ~/.cache/pypoetry
+        ls -al
