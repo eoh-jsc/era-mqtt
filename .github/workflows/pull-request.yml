@@ -6,7 +6,6 @@ jobs:
   flake8:
     name: "Flake8"
     runs-on: ubuntu-latest
-    container: python:3.9.7-slim-buster
     steps:
       - uses: actions/checkout@v3
       - name: Install flake8
@@ -17,14 +16,10 @@ jobs:
   test:
     name: "Test coverage"
     runs-on: ubuntu-latest
-    container: python:3.10.10
     needs:
       - flake8
     steps:
       - uses: actions/checkout@v3
-      - name: Install poetry
-        run: |
-          pip install poetry
-          poetry install
+      - uses: ./.github/actions/cache_poetry
       - name: Run test
         run: poetry run pytest --cov

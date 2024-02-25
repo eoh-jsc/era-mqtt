@@ -1,0 +1,20 @@
+name: 'Cache poetry package'
+description: 'Cache poetry package'
+runs:
+  using: "composite"
+  steps:
+    - name: Cache dependencies
+      id: cache-dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pypoetry
+        key: ${{ runner.os }}-${{ github.repository }}-${{ hashFiles('**/poetry.lock') }}
+    - name: Install poetry
+      shell: bash
+      run: |
+        pip install -U poetry
+        python3 --version
+    - name: Install dependencies
+      shell: bash
+      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+      run: poetry install

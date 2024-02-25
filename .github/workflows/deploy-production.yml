@@ -35,14 +35,10 @@ jobs:
   verify-mqtt:
     name: "Verify mqtt"
     runs-on: ubuntu-latest
-    container: python:3.10.10
     needs:
       - deploy-production
     steps:
       - uses: actions/checkout@v3
-      - name: Install poetry
-        run: |
-          pip install poetry
-          poetry install
+      - uses: ./.github/actions/cache_poetry
       - name: Run test
         run: poetry run pytest .github/scripts/verify_mqtt_connection.py --mqtt_server ${{ secrets.MQTT_SERVER }} --mqtt_username ${{ secrets.MQTT_USERNAME }}
