@@ -12,7 +12,9 @@ runs:
     - name: Update setup tools
       shell: bash
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
-      run: pip install -U pip setuptools poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        export PATH="$HOME/.poetry/bin:$PATH"
     - name: Install dependencies
       shell: bash
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
