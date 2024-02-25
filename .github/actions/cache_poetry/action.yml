@@ -7,17 +7,12 @@ runs:
       id: cache-dependencies
       uses: actions/cache@v3
       with:
-        path: |
-          ~/.cache/pypoetry
-          .venv
+        path: ~/.cache/pypoetry
         key: ${{ runner.os }}-${{ github.repository }}-${{ hashFiles('**/poetry.lock') }}
-    - name: Install poetry no matter what
+    - name: Install poetry
       shell: bash
-      run: |
-        curl -sSL https://install.python-poetry.org | python3 -
-        echo "$HOME/.local/bin" >> $GITHUB_PATH
-    - name: Install requirements
+      run: pip install -U poetry
+    - name: Install dependencies
       shell: bash
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-      run: |
-        poetry install
+      run: poetry install
