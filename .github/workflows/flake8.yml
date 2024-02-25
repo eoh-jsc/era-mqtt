@@ -6,7 +6,7 @@ jobs:
   flake8:
     name: "Flake8"
     runs-on: ubuntu-latest
-    container: python:3.9.7-slim-buster
+    container: python:3.10.10
     steps:
       - uses: actions/checkout@v3
       - name: Install flake8
