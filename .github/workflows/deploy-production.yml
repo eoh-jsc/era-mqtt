@@ -35,7 +35,6 @@ jobs:
   verify-mqtt:
     name: "Verify mqtt"
     runs-on: ubuntu-latest
-    container: python:3.10.10
     needs:
       - deploy-production
     steps:
