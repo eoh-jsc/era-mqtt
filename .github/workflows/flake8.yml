@@ -22,9 +22,6 @@ jobs:
       - flake8
     steps:
       - uses: actions/checkout@v3
-      - name: Install poetry
-        run: |
-          pip install poetry
-          poetry install
+      - uses: ./.github/actions/cache_poetry
       - name: Run test
         run: poetry run pytest --cov
