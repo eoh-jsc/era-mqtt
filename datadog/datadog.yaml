@@ -1,6 +1,4 @@
 site: datadoghq.com
-hostname: local-mqtt1
-env: production
 logs_enabled: true
 
 logs_config:
