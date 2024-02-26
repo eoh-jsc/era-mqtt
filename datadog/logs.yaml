@@ -3,3 +3,11 @@ logs:
     path: /var/log/nginx/access.log
     service: mqtt1
     source: mqtt1
+  - type: file
+    path: /var/log/nginx/error.log
+    service: mqtt1
+    source: mqtt1
+  - type: file
+    path: /var/log/supervisor/supervisord.log
+    service: mqtt1
+    source: mqtt1

@@ -24,9 +24,11 @@ services:
       - uwsgi_log:/var/log/uwsgi
       - nginx_log:/var/log/nginx
       - supervisor_log:/var/log/supervisor
+      - ./datadog/datadog.yaml:/etc/datadog-agent/datadog.yaml
+      - ./datadog/logs.yaml:/etc/datadog-agent/conf.d/logs.d/conf.yaml
+    #    command: tail -f /dev/null
     depends_on:
       - postgres
-      - datadog-agent
 
   postgres:
     image: postgres:14
@@ -38,16 +40,16 @@ services:
       - postgres_db:/var/lib/postgresql/data
 
   # TODO not send when dev stage
-  datadog-agent:
-    image: "datadog/agent:7.51.0"
-    env_file:
-      - .env_datadog
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /proc/:/host/proc/:ro
-      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
-      - ./datadog/logs.yaml:/conf.d/logs.yaml
-      - nginx_log:/var/log/nginx
+#  datadog-agent:
+#    image: "datadog/agent:7.51.0"
+#    env_file:
+#      - .env_datadog
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock:ro
+#      - /proc/:/host/proc/:ro
+#      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+#      - ./datadog/logs.yaml:/conf.d/logs.yaml
+#      - nginx_log:/var/log/nginx
 
 volumes:
   postgres_db:
