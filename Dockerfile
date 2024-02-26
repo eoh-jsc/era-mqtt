@@ -19,7 +19,9 @@ RUN chmod -R 777 /usr/lib/emqx/data
 RUN wget https://www.emqx.com/en/downloads/broker/5.5.0/emqx-5.5.0-ubuntu22.04-amd64.deb && \
     apt-get install ./emqx-5.5.0-ubuntu22.04-amd64.deb
 
-RUN pip install poetry
+RUN ln -s /usr/bin/python3 /usr/bin/python
+
+RUN pip install poetry psycopg2-binary
 RUN poetry config virtualenvs.create false && \
     poetry install --no-dev && \
     mkdir /var/log/uwsgi
