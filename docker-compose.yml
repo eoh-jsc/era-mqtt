@@ -19,6 +19,8 @@ services:
       - ./mqtt/emqx.conf:/etc/emqx/emqx.conf
       - ./nginx/nginx.conf:/etc/nginx/sites-available/nginx.conf
       - ./certs/:/etc/ssl/eoh-certs/
+      - ./datadog/datadog.yaml:/etc/datadog-agent/datadog.yaml
+      - ./datadog/logs.yaml:/etc/datadog-agent/conf.d/logs.d/conf.yaml
       - emqx_data:/usr/lib/emqx/data
       - emqx_log:/var/log/emqx
       - uwsgi_log:/var/log/uwsgi
@@ -26,7 +28,6 @@ services:
       - supervisor_log:/var/log/supervisor
     depends_on:
       - postgres
-      - datadog-agent
 
   postgres:
     image: postgres:14
@@ -36,18 +37,6 @@ services:
       POSTGRES_DB: emqx
     volumes:
       - postgres_db:/var/lib/postgresql/data
-
-  # TODO not send when dev stage
-  datadog-agent:
-    image: "datadog/agent:7.51.0"
-    env_file:
-      - .env_datadog
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /proc/:/host/proc/:ro
-      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
-      - ./datadog/logs.yaml:/conf.d/logs.yaml
-      - nginx_log:/var/log/nginx
 
 volumes:
   postgres_db:

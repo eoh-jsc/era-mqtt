@@ -1,0 +1,14 @@
+site: datadoghq.com
+logs_enabled: true
+
+logs_config:
+  container_collect_all: true
+
+apm_config:
+  enabled: false
+
+use_dogstatsd: true
+dogstatsd_socket: /opt/datadog/apm/inject/run/dsd.socket
+
+remote_configuration:
+  enabled: true
