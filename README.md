@@ -1,6 +1,10 @@
 # Build history
 
-[![Build history](https://buildstats.info/github/chart/eoh-jsc/era-mqtt?branch=main)](https://github.com/eoh-jsc/era-mqtt/actions)
+Release version (main).
+
+Not include `Deploy production`, means 1m30s
+
+[![Build history](https://buildstats.info/github/chart/eoh-jsc/era-mqtt?branch=main&&buildCount=30)](https://github.com/eoh-jsc/era-mqtt/actions)
 
 # Usage
 
