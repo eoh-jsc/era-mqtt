@@ -12,7 +12,7 @@ RUN apt-get install -y python3.10 python3-pip python3-dev
 RUN pip install poetry
 
 RUN poetry config virtualenvs.create false && \
-    poetry install --no-dev
+    poetry install --without dev
 
 RUN ln -s /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-enabled/
 RUN unlink /etc/nginx/sites-enabled/default
