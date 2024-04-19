@@ -1,6 +1,6 @@
 from fabric2 import task
 
-project_path = '/root/era-mqtt'
+project_path = '/home/ubuntu/canopi-mqtt'
 
 
 @task
