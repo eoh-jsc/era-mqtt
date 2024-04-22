@@ -57,4 +57,8 @@ Connect mqtt
 - admin / canopi#1
 - subscribe #
 
-Done.
+
+![image](https://github.com/canopi-jsc/canopi-mqtt/assets/91381699/d02af6ea-9525-4cae-beca-0e7428a29eb5)
+
+
+Done
