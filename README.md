@@ -102,7 +102,7 @@ DD_ENV=production
 DD_HOSTNAME=mqtt1 
 ```
 
-API_KEY: a random string. Format: Token <random-string>
+API_KEY: a random string. Format: `Token random_string`
 
 is used for backend when calling api to create user/acl mqtt 
 
