@@ -61,4 +61,77 @@ Connect mqtt
 ![image](https://github.com/canopi-jsc/canopi-mqtt/assets/91381699/d02af6ea-9525-4cae-beca-0e7428a29eb5)
 
 
-Done
+# Deployment
+
+Note: The setup almost the same locally, the difference is run on an EC2 instance. 
+
+### AWS
+Go to AWS Console, create EC2 ubuntu instance 
+
+CPU: t2.medium 
+
+Storage: 40Gb 
+
+### Deploy 
+
+1. SSH into EC2 
+
+Go to AWS console, connect into EC2 and add your ssh key. 
+
+Go to local computer, ssh into your EC2.
+
+```
+ssh ubuntu@13.250.125.47
+```
+
+2. Clone project 
+
+```
+git clone git@github.com:canopi-jsc/canopi-mqtt.git 
+cd canopi-mqtt 
+```
+
+3. Adding `.env` file 
+
+```
+BUILD_ENV=production 
+SQLALCHEMY_DATABASE_URI=postgresql://root:password@postgres/emqx 
+API_KEY=Token 123456789 
+DD_API_KEY=DD_API_KEY 
+DD_ENV=production 
+DD_HOSTNAME=mqtt1 
+```
+
+API_KEY: a random string. Format: Token <random-string>
+
+is used for backend when calling api to create user/acl mqtt 
+
+DD_API_KEY: create one from datadog
+
+is used for collecting request and send to datadog 
+https://docs.datadoghq.com/account_management/api-app-keys/#add-an-api-key-or-client-token
+
+4. Buying SSL and add to `certs` folder
+
+5. Running web, emqx
+
+```
+docker-compose up
+```
+
+6. Opening another cli tab, ssh into EC2, run migration 
+
+```
+docker-compose run app poetry run flask db upgrade 
+```
+
+7. Creating cloudflare record 
+
+
+### Done, you can now access this link. 
+
+API: https://mqtt1.eraiot.online 
+
+MQTT: mqtt1.eraiot.online:1883 
+
+WSS: mqtt1.eraiot.online:8084 
