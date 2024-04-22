@@ -45,11 +45,11 @@
 
 ### Deployment
 
-Note: The setup almost the same locally, the difference is run on an EC2 instance.
+> Note: The setup almost the same locally, the difference is run on an EC2 instance.
 
 #### AWS
 
-Go to AWS Console, create EC2 ubuntu instance
+Go to AWS Console, create `EC2 ubuntu` instance
 
 - CPU: t2.medium
 - Storage: 40Gb
@@ -58,7 +58,7 @@ Go to AWS Console, create EC2 ubuntu instance
 
 1. SSH into EC2
 
-- Go to AWS console, connect into EC2 and add your ssh key.
+- Go to AWS console, connect into EC2 and `add your ssh key`.
 - Go to local computer, ssh into your EC2, `ssh ubuntu@13.250.125.47`
 
 2. Clone project
@@ -80,10 +80,13 @@ DD_HOSTNAME=mqtt1
 ```
 
 - API_KEY: a random string. Format: `Token random_string`
+
   is used for backend when calling api to create user/acl mqtt
 
 - DD_API_KEY: create one from datadog
+
   is used for collecting request and send to datadog
+
   https://docs.datadoghq.com/account_management/api-app-keys/#add-an-api-key-or-client-token
 
 4. Buying SSL and add to `certs` folder
@@ -93,7 +96,7 @@ DD_HOSTNAME=mqtt1
 6. Opening another cli tab, ssh into EC2, run migration
    `docker-compose run app poetry run flask db upgrade`
 
-7. Creating cloudflare record
+7. Creating cloudflare `record`
 
 #### Done, you can now access this link.
 
