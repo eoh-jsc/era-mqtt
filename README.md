@@ -1,17 +1,5 @@
 # Canopi-mqtt
 
-### Build history
-
-Release version (main).
-
-Not include `Deploy production`, means 1m30s
-
-[![Build history](https://buildstats.info/github/chart/eoh-jsc/era-mqtt?branch=main&&buildCount=30)](https://github.com/eoh-jsc/era-mqtt/actions)
-
-### Note
-
-When install new package, must making docker-copmpose up --build again
-
 ### Run local
 
 1. Add `.env` file
@@ -114,3 +102,15 @@ API: https://mqtt1.eraiot.online
 MQTT: mqtt1.eraiot.online:1883
 
 WSS: mqtt1.eraiot.online:8084
+
+### Build history
+
+Release version (main).
+
+Not include `Deploy production`, means 1m30s
+
+[![Build history](https://buildstats.info/github/chart/eoh-jsc/era-mqtt?branch=main&&buildCount=30)](https://github.com/eoh-jsc/era-mqtt/actions)
+
+### Note
+
+When install new package, must making docker-copmpose up --build again
