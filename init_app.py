@@ -1,6 +1,7 @@
 from enum import Enum
 from hashlib import sha256
 
+import requests
 from flask import redirect
 from flask import Response
 from flask_admin import Admin
@@ -169,6 +170,13 @@ def create_app(env_filename, test):
         db.session.commit()
         return 'OK', 201
 
+    def _kick_client(client_id):
+        response = requests.delete(
+            url=f"{env['EMQX_BASE_URL']}/clients/{client_id}",
+            auth=(env['EMQX_USERNAME'], env['EMQX_PASSWORD']),
+        )
+        return response.status_code
+
     @app.route('/api/user/<username>', methods=['DELETE'])
     @basic_auth.required
     def user_delete(username):
@@ -181,6 +189,7 @@ def create_app(env_filename, test):
         db.session.delete(user)
         db.session.commit()
         _delete_all_acl_by_username(username)
+        _kick_client(username)
         return 'OK', 204
 
     @app.route('/api/acl', methods=['GET', 'POST'])
