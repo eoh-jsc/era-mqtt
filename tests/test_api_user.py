@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import requests_mock
 from freezegun import freeze_time
 
 from factories.acl import AclFactory
@@ -38,16 +39,26 @@ def test_add_user_but_already_exist(client, auth_user):
 
 
 def test_delete_user(client, auth_user):
-    user = UsersFactory()
-    AclFactory(username=user.username)
-    response = client.delete(f'/api/user/{user.username}', headers=auth_user)
-    assert response.status_code == 204
-    assert response.data == b''
-    assert Users.query.count() == 0
-    assert Acl.query.count() == 0
+    with requests_mock.Mocker() as m:
+        user = UsersFactory()
+        AclFactory(username=user.username)
+        m.delete(f'http://localhost:18083/api/v5/clients/{user.username}')
+
+        response = client.delete(f'/api/user/{user.username}', headers=auth_user)
+        assert response.status_code == 204
+        assert response.data == b''
+        assert Users.query.count() == 0
+        assert Acl.query.count() == 0
+
+        assert m.call_count == 1
+        assert m.request_history[0].method == 'DELETE'
+        assert m.request_history[0].url == f'http://localhost:18083/api/v5/clients/{user.username}'
 
 
 def test_delete_user_but_no_exist(client, auth_user):
-    response = client.delete('/api/user/USER_NOT_EXIST', headers=auth_user)
-    assert response.status_code == 404
-    assert response.data == b'No such user'
+    with requests_mock.Mocker() as m:
+        response = client.delete('/api/user/USER_NOT_EXIST', headers=auth_user)
+        assert response.status_code == 404
+        assert response.data == b'No such user'
+
+        assert m.call_count == 0

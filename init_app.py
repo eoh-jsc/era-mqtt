@@ -175,6 +175,7 @@ def create_app(env_filename, test):
             url=f"{env['EMQX_BASE_URL']}/clients/{client_id}",
             auth=(env['EMQX_USERNAME'], env['EMQX_PASSWORD']),
         )
+        print('xxx', response)
         return response.status_code
 
     @app.route('/api/user/<username>', methods=['DELETE'])
