@@ -27,6 +27,8 @@ pytest-mock = "^3.10.0"
 flask-admin = "^1.6.1"
 ddtrace = "^2.6.5"
 psycopg2-binary = "^2.9.9"
+requests = "^2.32.3"
+requests-mock = "^1.12.1"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.1.1"

@@ -121,5 +121,6 @@ kubeconfig_*
 .vscode/
 *.auto.tfvars
 certs/
+mqtt/default_api_key.conf
 .DS_Store
 delete_fields.json

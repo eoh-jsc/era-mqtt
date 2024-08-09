@@ -2,22 +2,22 @@ FROM laughlamz/emqx-datadog
 
 USER root
 
-WORKDIR /app
-
-COPY . .
-
 RUN apt-get update -y
 RUN apt-get install -y python3.10 python3-pip python3-dev
 
-RUN pip install poetry
+RUN pip install -U pip poetry && \
+    poetry config virtualenvs.create false
 
-RUN poetry config virtualenvs.create false && \
-    poetry install --without dev
+ADD poetry.lock pyproject.toml ./
+RUN poetry install --no-dev
+
+WORKDIR /app
+COPY . .
 
 RUN ln -s /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-enabled/
 RUN unlink /etc/nginx/sites-enabled/default
 
-RUN mkdir /var/log/supervisor/supervisord.log && \
+RUN touch /var/log/supervisor/supervisord.log && \
     mkdir /var/log/uwsgi
 
 RUN chmod -R 777 /var/log/nginx/access.log && \
