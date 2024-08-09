@@ -16,6 +16,7 @@ services:
       - "8001:5000"
     volumes:
       - .:/app
+      - ./mqtt/default_api_key.conf:/etc/emqx/default_api_key.conf
       - ./mqtt/emqx.conf:/etc/emqx/emqx.conf
       - ./nginx/nginx.conf:/etc/nginx/sites-available/nginx.conf
       - ./certs/:/etc/ssl/eoh-certs/

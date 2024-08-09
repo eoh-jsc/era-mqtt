@@ -13,7 +13,7 @@
    DD_HOSTNAME=local-mqtt1
    ```
 
-2. Add certs folder with empty file
+2. Add `certs` folder with empty file
 
    certs/
 
@@ -21,13 +21,19 @@
 
    └── private-key.pem
 
-3. Run web, emqx `docker-compose up`
+3. Add `mqtt/default_api_key.conf`
 
-4. Open another tab, run migration `docker-compose exec app poetry run flask db upgrade`
+   ```
+   username:password
+   ```
 
-5. Done, test MQTT backend api http://localhost:8001/
+4. Run web, emqx `docker-compose up`
 
-6. Testing MQTT broker
+5. Open another tab, run migration `docker compose exec app poetry run flask db upgrade`
+
+6. Done, test MQTT backend api http://localhost:8001/
+
+7. Testing MQTT broker
 
 - Create user
   ```
@@ -38,10 +44,10 @@
   $ curl --location 'http://localhost:8001/api/acl' --header 'Content-Type: application/json' --header 'Authorization: Basic OlRva2VuIDEyMzQ1Njc4OQ==' --data '{"username": "admin", "pattern": "#", "read": true, "write": true}'
   ```
 - Connect mqtt
-  - localhost:1883
-  - admin / canopi#1
-  - subscribe #
-    ![Alt text](mqtt-connect.png)
+    - localhost:1883
+    - admin / canopi#1
+    - subscribe #
+      ![Alt text](mqtt-connect.png)
 
 ### Deployment
 
