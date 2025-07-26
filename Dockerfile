@@ -5,11 +5,11 @@ USER root
 RUN apt-get update -y
 RUN apt-get install -y python3.10 python3-pip python3-dev
 
-RUN pip install -U pip "poetry==1.8.3" && \
+RUN pip install -U pip poetry && \
     poetry config virtualenvs.create false
 
 ADD poetry.lock pyproject.toml ./
-RUN poetry install --no-dev
+RUN poetry install
 
 WORKDIR /app
 COPY . .
