@@ -10,9 +10,9 @@ def _create_rule(client, auth_user):
             'args': {
                 'topic': '${topic}',
                 'payload': '${payload}',
-            }
+            },
         }],
-        'enable': True
+        'enable': True,
     }, headers=auth_user)
     return response
 
@@ -67,9 +67,9 @@ def test_create_rule_but_no_id(client, auth_user):
             'args': {
                 'topic': '${topic}',
                 'payload': '${payload}',
-            }
+            },
         }],
-        'enable': True
+        'enable': True,
     }, headers=auth_user)
     assert response.status_code == 400
     assert response.data == b'Field "id" is required'
