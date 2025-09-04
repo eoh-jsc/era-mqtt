@@ -43,6 +43,7 @@ def test_delete_user(client, auth_user):
         user = UsersFactory()
         AclFactory(username=user.username)
         m.delete(f'http://localhost:18083/api/v5/clients/{user.username}')
+        m.delete(f'http://localhost:18083/api/v5/rules/{user.username}')
 
         response = client.delete(f'/api/user/{user.username}', headers=auth_user)
         assert response.status_code == 204
@@ -50,9 +51,11 @@ def test_delete_user(client, auth_user):
         assert Users.query.count() == 0
         assert Acl.query.count() == 0
 
-        assert m.call_count == 1
+        assert m.call_count == 2
         assert m.request_history[0].method == 'DELETE'
         assert m.request_history[0].url == f'http://localhost:18083/api/v5/clients/{user.username}'
+        assert m.request_history[1].method == 'DELETE'
+        assert m.request_history[1].url == f'http://localhost:18083/api/v5/rules/{user.username}'
 
 
 def test_delete_user_but_no_exist(client, auth_user):
