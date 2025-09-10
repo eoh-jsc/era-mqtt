@@ -33,4 +33,4 @@ jobs:
       - uses: tvdias/github-tagger@v0.0.1
         with:
           repo-token: '${{ secrets.ERA_MQTT_AUTORELEASE_TOKEN }}'
-          tag: 'v${{ steps.version-release.outputs.version }}'
+          tag: 's${{ steps.version-release.outputs.version }}'
