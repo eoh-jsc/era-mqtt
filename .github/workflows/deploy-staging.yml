@@ -1,0 +1,44 @@
+name: Deploy production
+
+on:
+  push:
+    tags:
+      - s*
+
+jobs:
+  deploy-staging:
+    name: "Deploy staging"
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.10-slim
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy
+        run: |
+          apt-get update -y
+          pip install fabric fabric2 invoke==2.0.0
+          echo "${{ secrets.DEPLOY_KEY }}" > id_rsa
+          fab deploy -H ${{ secrets.DEPLOY_STAGING_HOST }} -i ./id_rsa
+
+#  verify-api:
+#    name: "Verify api"
+#    runs-on: ubuntu-latest
+#    container:
+#      image: postman/newman:alpine
+#    needs:
+#      - deploy-production
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Run test
+#        run: newman run "https://api.getpostman.com/collections/${{ secrets.POSTMAN_COLLECTION_ID }}?apikey=${{ secrets.POSTMAN_API_KEY }}"
+#
+#  verify-mqtt:
+#    name: "Verify mqtt"
+#    runs-on: ubuntu-latest
+#    needs:
+#      - deploy-production
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: ./.github/actions/cache_poetry
+#      - name: Run test
+#        run: poetry run pytest .github/scripts/verify_mqtt_connection.py --mqtt_server ${{ secrets.MQTT_SERVER }} --mqtt_username ${{ secrets.MQTT_USERNAME }}
