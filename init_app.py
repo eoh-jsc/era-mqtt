@@ -190,6 +190,7 @@ def create_app(env_filename, test):
         db.session.commit()
         _delete_all_acl_by_username(username)
         _kick_client(username)
+        _delete_rule(username)
         return 'OK', 204
 
     @app.route('/api/acl', methods=['GET', 'POST'])
@@ -226,5 +227,45 @@ def create_app(env_filename, test):
     def acl_delete(username):
         _delete_all_acl_by_username(username)
         return 'OK', 204
+
+    def _create_or_update_rule(body):
+        if 'id' not in body:
+            return 'Field "id" is required', 400
+
+        id = body['id']
+        url = f"{env['EMQX_BASE_URL']}/rules"
+        response = requests.post(
+            url=url,
+            auth=(env['EMQX_USERNAME'], env['EMQX_PASSWORD']),
+            json=body,
+        )
+        if response.status_code == 201:
+            return 'Created', 201
+
+        # already exists, try update
+        if response.status_code == 400:
+            response = requests.put(
+                url=f'{url}/{id}',
+                auth=(env['EMQX_USERNAME'], env['EMQX_PASSWORD']),
+                json=body,
+            )
+        return response.text, response.status_code
+
+    def _delete_rule(id):
+        response = requests.delete(
+            url=f"{env['EMQX_BASE_URL']}/rules/{id}",
+            auth=(env['EMQX_USERNAME'], env['EMQX_PASSWORD']),
+        )
+        return response.text, response.status_code
+
+    @app.route('/api/rule', methods=['POST'])
+    @basic_auth.required
+    def rule_api():
+        return _create_or_update_rule(request.json)
+
+    @app.route('/api/rule/<id>', methods=['DELETE'])
+    @basic_auth.required
+    def rule_delete(id):
+        return _delete_rule(id)
 
     return app
